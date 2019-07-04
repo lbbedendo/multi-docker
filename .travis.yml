@@ -3,7 +3,7 @@ services:
   - docker
 
 before_install:
-  - docker -t lbarbieri/react-test -f ./client/Dockerfile.dev ./client
+  - docker build -t lbarbieri/react-test -f ./client/Dockerfile.dev ./client
 
 script:
   - docker run lbarbieri/react-test npm test -- --coverage
