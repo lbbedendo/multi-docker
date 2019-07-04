@@ -1,0 +1,22 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker -t lbarbieri/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run lbarbieri/react-test npm test -- --coverage
+
+after_success:
+  - docker build -t lbarbieri/multi-client ./client
+  - docker build -t lbarbieri/multi-nginx ./nginx
+  - docker build -t lbarbieri/multi-server ./server
+  - docker build -t lbarbieri/multi-worker ./worker
+  # Log in to the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Push those images to docker hub
+  - docker push lbarbieri/multi-client
+  - docker push lbarbieri/multi-nginx
+  - docker push lbarbieri/multi-server
+  - docker push lbarbieri/multi-worker
